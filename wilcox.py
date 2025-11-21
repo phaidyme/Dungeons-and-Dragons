@@ -122,7 +122,6 @@ def attack():
     print(f"handaxe: {handaxe} slashing damage")
     print("_" * 20)
 
-
 # contents of journal of ?:
 #   b/w clans of dwarfs and gnomes
 #   rich mine in wave echo cave
@@ -402,6 +401,3 @@ print(HP, '/', max_HP, "HP,", hit_die, "hit die")
 print(AC, "AC")
 print("spell slots:", ss_1)
 print("lay on hands", lay_on_hands)
-
-
-#def attack(die, )
