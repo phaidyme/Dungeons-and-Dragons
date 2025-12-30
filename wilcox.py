@@ -95,6 +95,8 @@ def D(n, modifier=0, advantage=False, disadvantage=False):
     n += modifier
     return n
 
+def longsword(advantage = False):
+    return
 
 def attack():
     print("_" * 20)
@@ -381,7 +383,7 @@ print("initiative", D(20, DEX))
 print("history", D(20, INT))
 print("intimidation", D(20, CHA))
 
-# next session
+print("\n*** next session ***\n")
 
 print("investigation", D(20, INT))
 print("survival", D(20, WIS))
@@ -390,7 +392,85 @@ print("cooking", D(20, WIS, advantage=True))
 HP = max_HP
 ss_1 = ss_1_max
 
+inv["full-plate armour +1"] += 1 # ilya gave me hers to turn into half-plate
+
 print("perception", D(20, WIS))
+
+# our drow prisoner escaped
+
+print("\n*** next session ***\n")
+print("deception", D(20, CHA))
+gold -= 30
+
+print("dexterity", D(20, DEX))
+print("nature", D(20, WIS))
+
+# buying drinks
+silver -= 4
+
+# I gots drunk, poisoned
+
+# to apologise
+gold -= 1
+
+# phaelis spotted the dragon at night going southeast towards
+# the sword mountains near the edge of the Kryptgarden forest
+
+# after I wake up I'm going to check out the sleeping giant inn
+
+print("\n*** next session ***\n")
+
+print("cuddle maw", D(20, WIS))
+
+lay_on_hands_max = 20
+def long_rest():
+    global HP, ss_1, hit_die, lay_on_hands
+    HP = max_HP
+    ss_1 = ss_1_max
+    hit_die = 4
+    lay_on_hands = lay_on_hands_max
+long_rest()
+
+print("hangover", D(20, CON)) # 13, not poisoned anymore
+print("vibe check", D(20, CHA))
+print("flirting", D(20, CHA))
+# the hot orc bartender's name is Berthilda
+print("charisma", D(20, CHA))
+# candlekeep in neverwinter has books on how to smith good
+print("dragon?", D(20, WIS)) # no, it's a manticore
+
+
+print("\n*** next session ***\n")
+print("initiative", D(20, DEX))
+print("history", D(20, WIS))
+attack()
+attack()
+# divine sense found an area right behind the windmill that was consecrated
+print("medicine", D(20, INT))
+print("initiative", D(20, DEX))
+print("athletics", D(20, STR))
+print("athletics", D(20, STR))
+print("athletics", D(20, STR))
+ss_1 -= 1 # bless
+print("medicine", D(20, INT))
+# short rest, nothing to do
+print("perception", D(20, WIS)) # how to get into abandoned dwarf fortress?
+print("athletics", D(20, STR))
+
+
+print("\n*** next session ***\n")
+print("initiative", D(20, DEX))
+lay_on_hands -= 5 # healing Ilya's paralysis
+# restrained
+print("con save", D(20, CON))
+# poisoned and paralysed
+HP -= 5 # piercing
+HP -= 6 # poison
+HP -= 10 # piercing from Thora's hail of thorns
+print("con save", D(20, CON))
+HP -= 43 # spider auto crit cause I was paralysed
+# PERMADEATH
+
 
 print('_'*50)
 print_dict(inv)
