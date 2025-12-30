@@ -1,6 +1,6 @@
 import random
 
-#random.seed(0)  # want the rolls to be the same each time
+random.seed(0)  # want the rolls to be the same each time
 
 def print_dict(dictionary, level=0):
     dictionary = {
@@ -26,7 +26,7 @@ def D(n, advantage=False, disadvantage=False):
 class Weapon:
     def __init__(self, name, dice, plus):
         self.name = name
-        self.die = dice
+        self.dice = dice
         self.plus = plus
 class Armour:
     def __init__(self, name, base_ac):
@@ -47,6 +47,9 @@ class Character:
         self.charisma = charisma
 
         self.skills = {
+            "initiative": {
+                "ability": "dexterity", "proficiency": 0
+            },
             "acrobatics": {
                 "ability": "dexterity", "proficiency": 0
             },
@@ -106,24 +109,33 @@ class Character:
         return self.armour.base_ac + self.get_modifier("dexterity")
 
     def attack(self, weapon, advantage = False, disadvantage = False):
-        print(f"---- attacking with {weapon.name}")
+        print(f" - attacking with {weapon.name}")
 
         attack_roll = D(20, advantage, disadvantage)
         
-        damage =\
-        self.get_modifier("dexterity")
-        + self.proficiency_bonus
-        + sum(D(dice) for dice in weapon.die)
+        if attack_roll == 1:
+            print("   critical miss :(")
+            return
+        
+        damage = sum([
+            self.get_modifier("dexterity"),
+            self.proficiency_bonus,
+            sum([D(die) for die in weapon.dice]),
+            weapon.plus
+        ])
         
         if attack_roll == 20:
-            print("critical hit!")
-            damage +=\
-            self.get_modifier("dexterity")
-            + self.proficiency_bonus,
-            + sum(weaopn.die)
+            print("   critical hit!")
+            critical = sum([
+                self.get_modifier("dexterity"),
+                self.proficiency_bonus,
+                sum(weapon.dice),
+                weapon.plus
+            ])
+            print(f"   {damage} + {critical} = {damage + critical} damage")
         else:
             print(
-                f"---- rolled {attack_roll},",
+                f"   rolled {attack_roll},",
                 (
                     attack_roll
                     + self.get_modifier('dexterity')
@@ -132,7 +144,8 @@ class Character:
                 ),
                 "to hit"
             )
-        print(f"---- {damage} damage")
+            print(f"   {damage} damage")
+        return attack_roll
     def get_modifier(self, ability):
         return int((getattr(self, ability) - 10) / 2)
     def roll(skill, advantage = False, disadvantage = False):
@@ -141,9 +154,22 @@ class Character:
         bonus = self.proficiency_bonus + self.skills[skill]["proficiency"]
         result = n + modifier + bonus
         print(f"rolled {result} for {skill} ({n} + {modifier} + {bonus})")
+        return result
     def long_rest(self):
         self.curr_hp = self.full_hp
         self.hit_dice = self.level
+    def short_rest(self):
+        print(" - short rest")
+        i = self.hit_dice
+        n = 0
+        total_healed = 0
+        while(self.hit_dice > 0 and self.curr_hp + 10 < self.full_hp):
+            healing = D(10) + self.get_modifier("constitution")
+            self.hit_dice -= 1
+            self.curr_hp += healing
+            n += 1
+            total_healed += healing
+        print(f"   used {n}/{i} hit dice to heal {total_healed} HP")
         
 
 karla = Character(10, 15, 14, 14, 10, 8)
@@ -167,14 +193,18 @@ karla.gold = 10
 karla.silver = 0
 karla.copper = 0
 karla.inventory = {
-    "common clothes": 1,
     "quiver": {
         "arrow": 50,
     },
     "backpack": {
         "bedroll": 1,
         "blanket": 1,
-        "mess kit": 1,
+        "mess kit": {
+            "cup": 1,
+            "simple cutlery": 1,
+            "cooking pan": 1,
+            "shallow bowl": 1
+        },
         "waterskin": 1,
         "rations": 10,
         "hempen rope": 50,
@@ -183,10 +213,12 @@ karla.inventory = {
         "whetstone": 1,
     }
 }
-karla.sword = Weapon("rapier", [8], 0)
-karla.bow = Weapon("longbow", [8], 0)
+karla.clothes = "common clothes"
 karla.armour = Armour("studded leather", 12)
 karla.shield = Armour("shield", 2)
+
+karla.sword = Weapon("rapier", [8], 0)
+karla.bow = Weapon("longbow", [8], 0)
 
 # level 2
 karla.level = 2
@@ -197,27 +229,33 @@ karla.level = 3
 karla.full_hp += 6 + 3
 karla.superiority_dice = 4
 karla.maneuvers = [
-    "commander`s strike",
-    "riposte"
-    "trip attack",
+    "commander's strike",
+    "riposte",
+    "trip attack"
 ]
 # one artisan's tools and one fighter skill proficiency
 karla.skills["perception"]["proficiency"] = 1
+karla.skills["smith`s tools"] = {
+    "ability": "strength", "proficiency": 1
+}
 
 # level 4
 karla.level = 4
 karla.full_hp += 6 + 3
+# ASI
 karla.dexterity += 2
 
 karla.long_rest()
-karla.attack(karla.sword)
 
+print("----- inventory -----")
 print_dict(karla.inventory)
-print(
+print("---------------------")
+print('',
     karla.gold, "gold,",
     karla.silver, "silver,",
     karla.copper, "copper"
 )
-print(karla.curr_hp, '/', karla.full_hp, "HP,", karla.hit_dice, "hit die")
-print(f"{karla.get_ac()} AC + {karla.shield.base_ac} with shield")
-print(karla.superiority_dice, "superiority dice")
+print(f" {karla.curr_hp} / {karla.full_hp} HP, {karla.hit_dice} hit die")
+print(f" {karla.get_ac()} AC + {karla.shield.base_ac} with shield")
+print(f" {karla.superiority_dice} superiority dice")
+print(" maneuvers:", ', '.join(karla.maneuvers))
